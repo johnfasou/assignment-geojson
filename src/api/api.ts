@@ -9,6 +9,6 @@ export const fetchOSMData = async (GeoBox: GeoBoxType): Promise<any> => {
     const osm = await axios.get(fullUrl)
     return osm
   } catch (error) {
-    return ""
+    return error
   }
 }

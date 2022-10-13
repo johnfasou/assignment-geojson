@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Box } from "@mui/material"
 import { DisplayData } from "../DisplayData"
 import { GeoBoxForm } from "../GeoBoxForm"
 import { fetchOSMData } from "../../api/api"
@@ -13,7 +14,7 @@ export const GeoJson = (): JSX.Element => {
   const handleSubmit = async (geoBox: GeoBoxType): Promise<void> => {
     setLoading(true)
     const osm = await fetchOSMData(geoBox)
-    if (osm === "") {
+    if (!osm?.data) {
       setError("Something went wrong")
       setLoading(false)
       return
@@ -22,16 +23,19 @@ export const GeoJson = (): JSX.Element => {
     setJsonData(json)
     setLoading(false)
   }
+  const clearDisplay = () => setJsonData("")
   return (
     <>
-      <GeoBoxForm
-        clearDisplay={() => setJsonData("")}
-        loading={loading}
-        error={error}
-        setError={setError}
-        handleSubmit={handleSubmit}
-      />
-      {jsonData && <DisplayData data={jsonData} />}
+      <Box display="flex" justifyContent="center" minHeight="100vh">
+        <GeoBoxForm
+          clearDisplay={clearDisplay}
+          loading={loading}
+          error={error}
+          setError={setError}
+          handleSubmit={handleSubmit}
+        />
+        {jsonData && <DisplayData data={jsonData} />}
+      </Box>
     </>
   )
 }

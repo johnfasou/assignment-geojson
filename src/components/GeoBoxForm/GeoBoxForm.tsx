@@ -9,6 +9,7 @@ import {
 import { useState } from "react"
 import { GeoBoxType } from "../../types"
 import { Coordinate } from "./Coordinate"
+import { formValidators } from "./formValidators"
 
 const initialGeoBox: GeoBoxType = {
   left: "44.8159610691",
@@ -37,21 +38,22 @@ export const GeoBoxForm = ({
       [event.target.name]: event.target.value,
     })
   }
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+    event.preventDefault()
+    clearDisplay()
+
+    const error = formValidators(geoBox)
+    if (error) {
+      setError(error)
+      return
+    }
+    setError("")
+    handleSubmit(geoBox)
+  }
 
   return (
     <>
-      <form
-        onSubmit={(event: React.FormEvent<HTMLFormElement>): void => {
-          event.preventDefault()
-          clearDisplay()
-          if (!geoBox.bottom || !geoBox.left || !geoBox.right || !geoBox.top) {
-            setError("Please enter all Coordinates")
-            return
-          }
-          setError("")
-          handleSubmit(geoBox)
-        }}
-      >
+      <form onSubmit={onSubmit}>
         <Box
           sx={{
             margin: "15px",
@@ -76,18 +78,18 @@ export const GeoBoxForm = ({
 
           <Card>
             <Coordinate
-              name="top"
-              label="Top latitude:"
-              placeholder="northern-most"
-              geoData={geoBox.top}
-              onChange={onChange}
-            />
-
-            <Coordinate
               name="bottom"
               label="Bottom latitude:"
               placeholder="southern-most"
               geoData={geoBox.bottom}
+              onChange={onChange}
+            />
+
+            <Coordinate
+              name="top"
+              label="Top latitude:"
+              placeholder="northern-most"
+              geoData={geoBox.top}
               onChange={onChange}
             />
           </Card>
@@ -109,7 +111,7 @@ export const GeoBoxForm = ({
           >
             Get GeoJson data
           </Button>
-          {loading && <CircularProgress />}
+          {loading && <CircularProgress size={30} sx={{ marginTop: "11px" }} />}
         </Box>
         {error && (
           <Alert severity="error">
