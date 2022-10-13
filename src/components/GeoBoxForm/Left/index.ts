@@ -1,1 +1,0 @@
-export { Left } from "./Left"

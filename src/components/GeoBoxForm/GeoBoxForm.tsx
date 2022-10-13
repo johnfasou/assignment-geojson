@@ -1,9 +1,14 @@
+import {
+  Card,
+  Button,
+  Box,
+  CircularProgress,
+  Alert,
+  AlertTitle,
+} from "@mui/material"
 import { useState } from "react"
 import { GeoBoxType } from "../../types"
-import { Bottom } from "./Bottom"
-import { Left } from "./Left"
-import { Right } from "./Right"
-import { Top } from "./Top"
+import { Coordinate } from "./Coordinate"
 
 const initialGeoBox: GeoBoxType = {
   left: "44.8159610691",
@@ -13,11 +18,19 @@ const initialGeoBox: GeoBoxType = {
 }
 
 export const GeoBoxForm = ({
+  clearDisplay,
+  error,
+  setError,
+  loading,
   handleSubmit,
 }: {
+  clearDisplay: () => void
+  error: string
+  setError: React.Dispatch<React.SetStateAction<string>>
+  loading: boolean
   handleSubmit: (geoBox: GeoBoxType) => void
 }): JSX.Element => {
-  const [geoBox, setGeoBox] = useState(initialGeoBox)
+  const [geoBox, setGeoBox] = useState<GeoBoxType>(initialGeoBox)
   const onChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setGeoBox({
       ...geoBox,
@@ -30,14 +43,80 @@ export const GeoBoxForm = ({
       <form
         onSubmit={(event: React.FormEvent<HTMLFormElement>): void => {
           event.preventDefault()
+          clearDisplay()
+          if (!geoBox.bottom || !geoBox.left || !geoBox.right || !geoBox.top) {
+            setError("Please enter all Coordinates")
+            return
+          }
+          setError("")
           handleSubmit(geoBox)
         }}
       >
-        <Left geoData={geoBox.left} onChange={onChange} />
-        <Right geoData={geoBox.right} onChange={onChange} />
-        <Top geoData={geoBox.top} onChange={onChange} />
-        <Bottom geoData={geoBox.bottom} onChange={onChange} />
-        <button type="submit">Get GeoJson data</button>
+        <Box
+          sx={{
+            margin: "15px",
+          }}
+        >
+          <Card>
+            <Coordinate
+              name="left"
+              label="Left longitude:"
+              placeholder="wester-nmost"
+              geoData={geoBox.left}
+              onChange={onChange}
+            />
+            <Coordinate
+              name="right"
+              label="Right longitude:"
+              placeholder="eastern-most"
+              geoData={geoBox.right}
+              onChange={onChange}
+            />
+          </Card>
+
+          <Card>
+            <Coordinate
+              name="top"
+              label="Top latitude:"
+              placeholder="northern-most"
+              geoData={geoBox.top}
+              onChange={onChange}
+            />
+
+            <Coordinate
+              name="bottom"
+              label="Bottom latitude:"
+              placeholder="southern-most"
+              geoData={geoBox.bottom}
+              onChange={onChange}
+            />
+          </Card>
+        </Box>
+
+        <Box
+          sx={{
+            margin: "15px",
+            display: "flex",
+          }}
+        >
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{
+              borderRadius: "7px",
+              margin: "10px",
+            }}
+          >
+            Get GeoJson data
+          </Button>
+          {loading && <CircularProgress />}
+        </Box>
+        {error && (
+          <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            {error}
+          </Alert>
+        )}
       </form>
     </>
   )

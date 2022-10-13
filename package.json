@@ -9,6 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
+    "@mui/icons-material": "^5.10.9",
+    "@mui/material": "^5.10.9",
     "@types/osmtogeojson": "^2.2.30",
     "axios": "^1.1.2",
     "osmtogeojson": "^3.0.0-beta.4",

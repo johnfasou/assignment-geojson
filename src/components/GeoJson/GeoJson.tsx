@@ -7,16 +7,31 @@ import { convertOsmToJson } from "../../helpers/convertOsmToJson"
 
 export const GeoJson = (): JSX.Element => {
   const [jsonData, setJsonData] = useState<string>("")
-  const handleSubmit = async (geoBox: GeoBoxType): Promise<void> => {
-    const osm = await fetchOSMData(geoBox)
-    const json = await convertOsmToJson(osm)
-    setJsonData(json || "")
-  }
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string>("")
 
+  const handleSubmit = async (geoBox: GeoBoxType): Promise<void> => {
+    setLoading(true)
+    const osm = await fetchOSMData(geoBox)
+    if (osm === "") {
+      setError("Something went wrong")
+      setLoading(false)
+      return
+    }
+    const json = await convertOsmToJson(osm.data)
+    setJsonData(json)
+    setLoading(false)
+  }
   return (
     <>
-      <GeoBoxForm handleSubmit={handleSubmit} />
-      <DisplayData data={jsonData} />
+      <GeoBoxForm
+        clearDisplay={() => setJsonData("")}
+        loading={loading}
+        error={error}
+        setError={setError}
+        handleSubmit={handleSubmit}
+      />
+      {jsonData && <DisplayData data={jsonData} />}
     </>
   )
 }
