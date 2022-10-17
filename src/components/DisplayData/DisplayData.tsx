@@ -1,4 +1,4 @@
-import { Card, Paper } from "@mui/material"
+import { Paper } from "@mui/material"
 
 export const DisplayData = ({ data }: { data: string }): JSX.Element => {
   return (
@@ -8,9 +8,10 @@ export const DisplayData = ({ data }: { data: string }): JSX.Element => {
         sx={{
           width: 640,
         }}
+        data-testid={"display-data"}
       >
         <h4>GeoJson Data</h4>
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+        <pre>{data && JSON.stringify(data, null, 2)}</pre>
       </Paper>
     </>
   )

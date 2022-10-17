@@ -3,8 +3,13 @@ import { render, screen } from "@testing-library/react"
 import { DisplayData } from "./DisplayData"
 
 describe("DisplayData test", () => {
-  test("should show content all the time", () => {
+  test("should show content all the time", async () => {
     render(<DisplayData data="Testing" />)
-    expect(screen.getByText(/Testing/i)).toBeDefined()
+
+    // const displayDataElement = screen.getByText(/GeoJson Data/i)
+    const displayDataElement = await screen.findByTestId<HTMLElement>(
+      `display-data`,
+    )
+    expect(displayDataElement).toBeDefined()
   })
 })

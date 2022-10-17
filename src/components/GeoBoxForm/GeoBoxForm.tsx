@@ -109,7 +109,7 @@ export const GeoBoxForm = ({
               margin: "10px",
             }}
           >
-            Get GeoJson data
+            Get GeoJson
           </Button>
           {loading && <CircularProgress size={30} sx={{ marginTop: "11px" }} />}
         </Box>

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { Box } from "@mui/material"
 import { DisplayData } from "../DisplayData"
 import { GeoBoxForm } from "../GeoBoxForm"
@@ -11,19 +11,25 @@ export const GeoJson = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>("")
 
-  const handleSubmit = async (geoBox: GeoBoxType): Promise<void> => {
-    setLoading(true)
-    const osm = await fetchOSMData(geoBox)
-    if (!osm?.data) {
-      setError("Something went wrong")
+  const handleSubmit = useCallback(
+    async (geoBox: GeoBoxType): Promise<void> => {
+      setLoading(true)
+      const osm = await fetchOSMData(geoBox)
+
+      if (!osm?.data) {
+        setError("Something went wrong")
+        setLoading(false)
+        return
+      }
+      const json = await convertOsmToJson(osm.data)
+      setJsonData(json)
       setLoading(false)
-      return
-    }
-    const json = await convertOsmToJson(osm.data)
-    setJsonData(json)
-    setLoading(false)
-  }
-  const clearDisplay = () => setJsonData("")
+    },
+    [],
+  )
+
+  const clearDisplay = useCallback((): void => setJsonData(""), [])
+
   return (
     <>
       <Box display="flex" justifyContent="center" minHeight="100vh">
